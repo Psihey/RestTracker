@@ -1,8 +1,8 @@
 package com.restTracker.restTracker.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -10,9 +10,13 @@ import java.util.Map;
 @Document (collection = "restTracker")
 public class MessageModel implements Serializable {
    @Id
+   @JsonView(JsonViewer.FullMessageMode.class)
    private String id;
+    @JsonView(JsonViewer.WithoutID.class)
    private String eventType;
+    @JsonView(JsonViewer.WithoutID.class)
    private long ts;
+    @JsonView(JsonViewer.WithoutID.class)
    private Map<String,String> params;
 
     public MessageModel(String eventType, long ts) {

@@ -1,5 +1,7 @@
 package com.restTracker.restTracker.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.restTracker.restTracker.model.JsonViewer;
 import com.restTracker.restTracker.model.MessageModel;
 import com.restTracker.restTracker.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,9 @@ public class MessageController {
     }
 
 
+
     @RequestMapping(value = "/message", method = RequestMethod.GET)
+    @JsonView(JsonViewer.WithoutID.class)
     public List<MessageModel> getActivitiesByTypeAndDate(@RequestParam(defaultValue = "") String eventType,
                                                          @RequestParam(defaultValue = "") String start,
                                                          @RequestParam(defaultValue = "") String end) {
@@ -38,6 +42,7 @@ public class MessageController {
 
     @Cacheable(value = "messageModel", key = "#eventType")
     @RequestMapping(value = "/message/{eventType}", method = RequestMethod.GET)
+    @JsonView(JsonViewer.WithoutID.class)
     public List<MessageModel> getActivityByType(@PathVariable String eventType) {
         return messageService.findByActivityType(eventType);
     }
