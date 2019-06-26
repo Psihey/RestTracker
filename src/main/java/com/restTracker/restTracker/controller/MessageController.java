@@ -3,6 +3,7 @@ package com.restTracker.restTracker.controller;
 import com.restTracker.restTracker.model.MessageModel;
 import com.restTracker.restTracker.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,13 +18,15 @@ public class MessageController {
     private MessageService messageService;
 
    @RequestMapping(value = "/message", method = RequestMethod.POST)
-    public ResponseEntity<?> saveActivity(@RequestBody MessageModel messageModel){
+    public ResponseEntity saveActivity(@RequestBody MessageModel messageModel){
         if (messageService.saveActivity(messageModel)){
-            return new ResponseEntity<>(HttpStatus.OK);
+             return ResponseEntity.ok(HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }
    }
+
+
 
    @RequestMapping(value = "/message", method = RequestMethod.GET)
     public List<MessageModel> getActivitiesByType(@RequestParam(defaultValue = "none") String eventType,
@@ -39,4 +42,11 @@ public class MessageController {
         }else
             return messageService.findByActivityAndDate(eventType,start,end);
         }
+
+
+    @Cacheable(value = "messageModel", key = "#eventType")
+    @RequestMapping(value = "/message/{eventType}", method = RequestMethod.GET)
+    public List<MessageModel> getAllActivityByType(@PathVariable String eventType){
+        return messageService.findByActivityType(eventType);
+    }
 }

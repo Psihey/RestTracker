@@ -1,6 +1,7 @@
 package com.restTracker.restTracker.configuration;
 
 
+import com.restTracker.restTracker.model.MessageModel;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +15,13 @@ public class RedisConfiguration extends CachingConfigurerSupport {
     public JedisConnectionFactory jedisConnectionFactory()
     {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName("127.0.0.1");
-        jedisConnectionFactory.setPort(6379);
+        jedisConnectionFactory.setTimeout(5000);
         return jedisConnectionFactory;
     }
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate()
+    public RedisTemplate<String, MessageModel> redisTemplate()
     {
-        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<Object, Object>();
+        RedisTemplate<String, MessageModel> redisTemplate = new RedisTemplate<String, MessageModel>();
         redisTemplate.setConnectionFactory(jedisConnectionFactory());
         redisTemplate.setExposeConnection(true);
         return redisTemplate;
