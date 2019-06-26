@@ -37,12 +37,25 @@ public class MessageService {
        return messageRepository.findByTsBetween(getDateFrom(start), getDateTo(timeFrom, end));
     }
 
+    public List<MessageModel> findActivity(String eventType, String startPeriod, String endPeriod) {
+        if (eventType.isEmpty()){
+            if (startPeriod.isEmpty()){
+                return findAll();
+            }else return findByDate(startPeriod,endPeriod);
+
+        }else if (startPeriod.isEmpty()){
+            return findByActivityType(eventType);
+        }else{
+            return findByActivityAndDate(eventType,startPeriod,endPeriod);
+        }
+    }
+
     private long getDateFrom(String start){
         return start.startsWith("0") ? Instant.now().getEpochSecond() : (Instant.now().getEpochSecond() - convertEnd(start));
     }
 
     private long getDateTo(long timeFrom, String end){
-        return  end.startsWith("0") ? Instant.now().getEpochSecond() : (timeFrom + convertEnd(end));
+        return  (end.startsWith("0")|| end.isEmpty()) ? Instant.now().getEpochSecond() : (timeFrom + convertEnd(end));
     }
 
     private long convertEnd(String date) {
@@ -56,4 +69,5 @@ public class MessageService {
         }
         return 0;
     }
+
 }

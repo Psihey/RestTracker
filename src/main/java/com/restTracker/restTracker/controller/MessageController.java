@@ -9,44 +9,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
 @Controller
 public class MessageController {
-   @Autowired
+    @Autowired
     private MessageService messageService;
 
-   @RequestMapping(value = "/message", method = RequestMethod.POST)
-    public ResponseEntity saveActivity(@RequestBody MessageModel messageModel){
-        if (messageService.saveActivity(messageModel)){
-             return ResponseEntity.ok(HttpStatus.OK);
-        }else {
+    @RequestMapping(value = "/message", method = RequestMethod.POST)
+    public ResponseEntity saveActivity(@RequestBody MessageModel messageModel) {
+        if (messageService.saveActivity(messageModel)) {
+            return ResponseEntity.ok(HttpStatus.OK);
+        } else {
             return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }
-   }
+    }
 
 
-
-   @RequestMapping(value = "/message", method = RequestMethod.GET)
-    public List<MessageModel> getActivitiesByType(@RequestParam(defaultValue = "none") String eventType,
-                                                  @RequestParam(defaultValue = "none") String start,
-                                                  @RequestParam(defaultValue = "none") String end){
-        if (eventType.equals("none")){
-            if (start.equals("none") || end.equals("none")){
-                return messageService.findAll();
-            }else return messageService.findByDate(start,end);
-
-        }else if (start.equals("none") || end.equals("none")){
-            return messageService.findByActivityType(eventType);
-        }else
-            return messageService.findByActivityAndDate(eventType,start,end);
-        }
+    @RequestMapping(value = "/message", method = RequestMethod.GET)
+    public List<MessageModel> getActivitiesByTypeAndDate(@RequestParam(defaultValue = "") String eventType,
+                                                         @RequestParam(defaultValue = "") String start,
+                                                         @RequestParam(defaultValue = "") String end) {
+        return messageService.findActivity(eventType, start, end);
+    }
 
 
     @Cacheable(value = "messageModel", key = "#eventType")
     @RequestMapping(value = "/message/{eventType}", method = RequestMethod.GET)
-    public List<MessageModel> getAllActivityByType(@PathVariable String eventType){
+    public List<MessageModel> getActivityByType(@PathVariable String eventType) {
         return messageService.findByActivityType(eventType);
     }
 }
