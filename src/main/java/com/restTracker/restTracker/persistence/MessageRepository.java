@@ -1,6 +1,7 @@
 package com.restTracker.restTracker.persistence;
 
 import com.restTracker.restTracker.model.MessageModel;
+import com.restTracker.restTracker.model.jwt.JwtRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,7 @@ public interface MessageRepository extends MongoRepository<MessageModel, String>
     List<MessageModel> findByEventTypeAndTsBetween(String eventType, long dateStart, long dateEnd);
 
     List<MessageModel> findByTsBetween(long dateStart, long dateEnd);
+
+    List<MessageModel> findByUser(JwtRequest user);
 }
 

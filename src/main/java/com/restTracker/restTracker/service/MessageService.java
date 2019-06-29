@@ -1,8 +1,11 @@
 package com.restTracker.restTracker.service;
 
 import com.restTracker.restTracker.model.MessageModel;
+import com.restTracker.restTracker.model.jwt.JwtRequest;
 import com.restTracker.restTracker.persistence.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -18,7 +21,9 @@ public class MessageService {
     }
 
     public boolean saveActivity(MessageModel messageModel) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         messageModel.setTs(Instant.now().getEpochSecond());
+        messageModel.setUser((JwtRequest) authentication.getDetails());
         MessageModel savedModel = messageRepository.save(messageModel);
         return savedModel != null;
     }
@@ -48,6 +53,11 @@ public class MessageService {
         }else{
             return findByActivityAndDate(eventType,startPeriod,endPeriod);
         }
+    }
+
+    public List<MessageModel> findByUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return messageRepository.findByUser((JwtRequest) authentication.getDetails());
     }
 
     private long getDateFrom(String start){

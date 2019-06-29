@@ -1,6 +1,8 @@
 package com.restTracker.restTracker.secutity;
 
+import com.restTracker.restTracker.model.UserAuthentication;
 import com.restTracker.restTracker.service.JwtUserDetailsService;
+import com.restTracker.restTracker.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +25,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtUserDetailsService jwtUserDetailsService;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -57,7 +61,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 // After setting the Authentication in the context, we specify
 // that the current user is authenticated. So it passes the
 // Spring Security Configurations successfully.
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(userService.findUserByName(username)));
             }
         }
         chain.doFilter(request, response);

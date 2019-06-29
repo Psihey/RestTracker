@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -29,8 +28,6 @@ public class MessageController {
         }
     }
 
-
-
     @RequestMapping(value = "/message", method = RequestMethod.GET)
     @JsonView(JsonViewer.WithoutID.class)
     public List<MessageModel> getActivitiesByTypeAndDate(@RequestParam(defaultValue = "") String eventType,
@@ -45,5 +42,11 @@ public class MessageController {
     @JsonView(JsonViewer.WithoutID.class)
     public List<MessageModel> getActivityByType(@PathVariable String eventType) {
         return messageService.findByActivityType(eventType);
+    }
+
+    @RequestMapping(value = "/mymessage", method = RequestMethod.GET)
+    @JsonView(JsonViewer.WithoutID.class)
+    public List<MessageModel> getActivityByUser() {
+        return messageService.findByUser();
     }
 }
